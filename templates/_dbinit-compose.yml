@@ -9,7 +9,7 @@ networks:
 services:
   #db: use Maria DB as our backend DB
   db:
-    image: docker.io/digiserve/ab-db:$AB_DB_VERSION
+    image: ghcr.io/cruglobal-ai/ab-db:$AB_DB_VERSION
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
     volumes:

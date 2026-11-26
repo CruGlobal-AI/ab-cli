@@ -12,7 +12,7 @@ networks:
 services:
   #nginx setup
   web:
-    image: docker.io/digiserve/ab-web:$AB_WEB_VERSION
+    image: ghcr.io/cruglobal-ai/ab-web:$AB_WEB_VERSION
     hostname: web
     volumes:
       - type: bind
@@ -31,7 +31,7 @@ services:
 
   #db: use Maria DB as our backend DB
   db:
-    image: docker.io/digiserve/ab-db:$AB_DB_VERSION
+    image: ghcr.io/cruglobal-ai/ab-db:$AB_DB_VERSION
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD # from .env
     volumes:
@@ -64,7 +64,7 @@ services:
   api_sails:
     # NOTE: since our file_processor is using our docker image, we should use
     # our api-sails image so USER permissions are correct between the two services.
-    image: docker.io/digiserve/ab-api-sails:$AB_API_SAILS_VERSION
+    image: ghcr.io/cruglobal-ai/ab-api-sails:$AB_API_SAILS_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - NODE_ENV=development
@@ -225,7 +225,7 @@ services:
   file_processor:
     # NOTE: our docker image contains additional utils not found in the node
     # image, so we use that instead.
-    image: docker.io/digiserve/ab-file-processor:$AB_FILE_PROCESSOR_VERSION
+    image: ghcr.io/cruglobal-ai/ab-file-processor:$AB_FILE_PROCESSOR_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
