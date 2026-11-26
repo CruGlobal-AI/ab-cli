@@ -252,32 +252,35 @@ services:
       - redis
   #/log_manager
 
-  #mcp_server: (AppBuilder) A service to expose our AppBuilder capabilities
-  #            as an mcp server.
-  mcp_server:
-    image: docker.io/digiserve/ab-mcp-server:$AB_MCP_SERVER_VERSION
-    environment:
-      - COTE_DISCOVERY_REDIS_HOST=redis
-      - MCP_SERVER_PORT
-      # - MCP_SERVER_HOST
-      # - MCP_SERVER_ALLOWED_HOSTS
-      # - MCP_SERVER_JSON_LIMIT
-      # - MCP_SERVER_MCP_PATH
-      # - MCP_SERVER_MCP_ALLOWED_HOSTS
-      # - MCP_SERVER_MCP_JSON_LIMIT
-      - MYSQL_PASSWORD
-      # - MYSQL_HOST
-      # - MYSQL_PORT
-      # - MYSQL_USER
-      # - MYSQL_DBPREFIX
-      # - MYSQL_DBADMIN
-      # - MYSQL_POOL_MAX
-      # - MYSQL_POOL_ACQUIRE_TIMEOUT
-      - DEFINITION_MANAGER_ENABLE
-    hostname: mcp_server
-    depends_on:
-      - redis
-  #/mcp_server
+  # #mcp_server: (AppBuilder) A service to expose our AppBuilder capabilities
+  # #            as an mcp server.
+  # Off in the CruGlobal-AI stack: the ab-mcp-server source and image are not
+  # available to this org yet. Uncomment once ghcr.io/cruglobal-ai/ab-mcp-server
+  # exists (or developer/mcp_server is checked out, for the dev compose file).
+  # mcp_server:
+  #   image: ghcr.io/cruglobal-ai/ab-mcp-server:$AB_MCP_SERVER_VERSION
+  #   environment:
+  #     - COTE_DISCOVERY_REDIS_HOST=redis
+  #     - MCP_SERVER_PORT
+  #     # - MCP_SERVER_HOST
+  #     # - MCP_SERVER_ALLOWED_HOSTS
+  #     # - MCP_SERVER_JSON_LIMIT
+  #     # - MCP_SERVER_MCP_PATH
+  #     # - MCP_SERVER_MCP_ALLOWED_HOSTS
+  #     # - MCP_SERVER_MCP_JSON_LIMIT
+  #     - MYSQL_PASSWORD
+  #     # - MYSQL_HOST
+  #     # - MYSQL_PORT
+  #     # - MYSQL_USER
+  #     # - MYSQL_DBPREFIX
+  #     # - MYSQL_DBADMIN
+  #     # - MYSQL_POOL_MAX
+  #     # - MYSQL_POOL_ACQUIRE_TIMEOUT
+  #     - DEFINITION_MANAGER_ENABLE
+  #   hostname: mcp_server
+  #   depends_on:
+  #     - redis
+  # #/mcp_server
 
   #notification_email: an smtp email service
   notification_email:
