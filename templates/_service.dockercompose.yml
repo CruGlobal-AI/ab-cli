@@ -2,7 +2,7 @@ version: "3.9"
 
   # #[name]: [description]
   # [name]:
-  #   image: digiserve/ab-[containerName]:<%=tag%>
+  #   image: ghcr.io/cruglobal-ai/ab-[containerName]:<%=tag%>
   #   environment:
   #    - COTE_DISCOVERY_REDIS_HOST=redis
   #    - MYSQL_PASSWORD

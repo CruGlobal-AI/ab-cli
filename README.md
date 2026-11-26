@@ -1,11 +1,11 @@
-![Tests](https://github.com/CruGlobal/ab-cli/actions/workflows/test-install.yml/badge.svg)
+![Tests](https://github.com/CruGlobal-AI/ab-cli/actions/workflows/test-install.yml/badge.svg)
 
 A command line helper for our AppBuilder development.
 
 # Installation
 
 ```sh
-$ sudo npm install -g CruGlobal/ab-cli
+$ sudo npm install -g CruGlobal-AI/ab-cli
 ```
 
 # Updating
@@ -13,13 +13,13 @@ $ sudo npm install -g CruGlobal/ab-cli
 To update to the latest version:
 
 ```sh
-$ sudo npm update -g CruGlobal/ab-cli
+$ sudo npm update -g CruGlobal-AI/ab-cli
 ```
 
 Or reinstall to ensure you have the latest:
 
 ```sh
-$ sudo npm install -g CruGlobal/ab-cli@latest
+$ sudo npm install -g CruGlobal-AI/ab-cli@latest
 ```
 
 # Usage

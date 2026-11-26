@@ -13,7 +13,7 @@ networks:
 services:
   #nginx setup
   web:
-    image: docker.io/digiserve/ab-web:$AB_WEB_VERSION
+    image: ghcr.io/cruglobal-ai/ab-web:$AB_WEB_VERSION
     hostname: web
     volumes:
       - files:/data
@@ -23,7 +23,7 @@ services:
 
   #db: use Maria DB as our backend DB
   db:
-    image: docker.io/digiserve/ab-db:$AB_DB_VERSION
+    image: ghcr.io/cruglobal-ai/ab-db:$AB_DB_VERSION
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
     volumes:
@@ -51,7 +51,7 @@ services:
 
   # #config: simply exists to pull in the config/local.js into our config volume
   # config:
-  #   image: docker.io/digiserve/ab-config:$AB_CONFIG_VERSION
+  #   image: ghcr.io/cruglobal-ai/ab-config:$AB_CONFIG_VERSION
   #   # workaround for SELinux bind mount issue (for podman only)
   #   # security_opt:
   #   #   label: disable
@@ -67,7 +67,7 @@ services:
 
   #api_sails: our API end point
   api_sails:
-    image: docker.io/digiserve/ab-api-sails:$AB_API_SAILS_VERSION
+    image: ghcr.io/cruglobal-ai/ab-api-sails:$AB_API_SAILS_VERSION
     # workaround for SELinux bind mount issue (for podman only)
     # security_opt:
     #   label: disable
@@ -109,7 +109,7 @@ services:
 
   #appbuilder: (AppBuilder) A multi-tenant aware service to process our AppBuilder requests.
   appbuilder:
-    image: docker.io/digiserve/ab-appbuilder:$AB_APPBUILDER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-appbuilder:$AB_APPBUILDER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -132,7 +132,7 @@ services:
 
   # #bot_manager: our #slack bot service
   # bot_manager:
-  #   image: digiserve/ab-bot-manager:$AB_BOT_MANAGER_VERSION
+  #   image: ghcr.io/cruglobal-ai/ab-bot-manager:$AB_BOT_MANAGER_VERSION
   #   environment:
   #     - COTE_DISCOVERY_REDIS_HOST=redis
   #     - BOT_DOCKERHUB_ENABLE
@@ -167,7 +167,7 @@ services:
 
   # custom_reports: A microservice for managing custom reports
   custom_reports:
-    image: docker.io/digiserve/ab-custom-reports:$AB_CUSTOM_REPORTS_VERSION
+    image: ghcr.io/cruglobal-ai/ab-custom-reports:$AB_CUSTOM_REPORTS_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -186,7 +186,7 @@ services:
 
   #definition_manager: (AppBuilder) A service to manage the definitions for a running AppBuilder platform.
   definition_manager:
-    image: docker.io/digiserve/ab-definition-manager:$AB_DEFINITION_MANAGER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-definition-manager:$AB_DEFINITION_MANAGER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -205,7 +205,7 @@ services:
 
   #file_processor: A service to manage uploaded files.
   file_processor:
-    image: docker.io/digiserve/ab-file-processor:$AB_FILE_PROCESSOR_VERSION
+    image: ghcr.io/cruglobal-ai/ab-file-processor:$AB_FILE_PROCESSOR_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -231,7 +231,7 @@ services:
 
   #log_manager: (AppBuilder) A log manager for various AB operations
   log_manager:
-    image: docker.io/digiserve/ab-log-manager:$AB_LOG_MANAGER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-log-manager:$AB_LOG_MANAGER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -281,7 +281,7 @@ services:
 
   #notification_email: an smtp email service
   notification_email:
-    image: docker.io/digiserve/ab-notification-email:$AB_NOTIFICATION_EMAIL_VERSION
+    image: ghcr.io/cruglobal-ai/ab-notification-email:$AB_NOTIFICATION_EMAIL_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -310,7 +310,7 @@ services:
 
   #process_manager: (AppBuilder) a micro service to manage our process tasks
   process_manager:
-    image: docker.io/digiserve/ab-process-manager:$AB_PROCESS_MANAGER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-process-manager:$AB_PROCESS_MANAGER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -328,7 +328,7 @@ services:
 
   #relay: (Appbuilder} A service to handle the communications with our relay server.
   relay:
-    image: docker.io/digiserve/ab-relay:$AB_RELAY_VERSION
+    image: ghcr.io/cruglobal-ai/ab-relay:$AB_RELAY_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -352,7 +352,7 @@ services:
 
   #tenant_manager: (AppBuilder) A service to manage the site's tenants
   tenant_manager:
-    image: docker.io/digiserve/ab-tenant-manager:$AB_TENANT_MANAGER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-tenant-manager:$AB_TENANT_MANAGER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
@@ -372,7 +372,7 @@ services:
 
   #user_manager: (AppBuilder) A microservice for managing Users
   user_manager:
-    image: docker.io/digiserve/ab-user-manager:$AB_USER_MANAGER_VERSION
+    image: ghcr.io/cruglobal-ai/ab-user-manager:$AB_USER_MANAGER_VERSION
     environment:
       - COTE_DISCOVERY_REDIS_HOST=redis
       - MYSQL_PASSWORD
