@@ -230,7 +230,7 @@ setInterval(checkRunning, 5 * 1000);
 
 var servicesToWatch = [];
 // {array}
-// an array of all the digiserve/(service:tag) that we are running in our
+// an array of all the (registry/)service:tag images that we are running in our
 // docker-compose.yml file.
 
 var serviceNames = {};

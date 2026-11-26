@@ -3,7 +3,7 @@
    "version": "0.0.1",
    "description": "A command line helper for our AppBuilder development.",
    "main": "index.js",
-   "repository": "https://github.com/Hiro-Nakamura/ab-cli",
+   "repository": "https://github.com/CruGlobal-AI/ab-cli",
    "author": "Johnny Hausman",
    "license": "MIT",
    "private": false,
