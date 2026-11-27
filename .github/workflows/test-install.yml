@@ -49,8 +49,14 @@ jobs:
       - name: Install AppBuilder
         run: node index.js install ab-test --stack=ab-test --develop --port=80 --tag=latest --dbExpose=true --dbPort=8888 --dbPassword=root --authType=login --relayEnabled=false --siteURL=http://localhost:80 --tenant.username=admin --tenant.password=admin --tenant.email=admin@email.com --tenant.url=http://localhost:80
 
-      # Give some time for the stack to come down fully
-      - run: sleep 15
+      # Wait for the install's stack to come down fully (was: sleep 15)
+      - name: Wait for install stack to come down
+        run: |
+          for i in $(seq 1 60); do
+            docker network ls --format '{{.Name}}' | grep -qx 'ab-test_default' || { echo "down after ${i}s"; exit 0; }
+            sleep 1
+          done
+          echo "::warning::ab-test_default network still up after 60s"
 
       # Update Permissions: api_sails crashes if a local DB attempt is used
       # and we don't have permission to write there.
@@ -72,8 +78,23 @@ jobs:
         run: pm2 start ./logs.js -- --toFile logs/ABServices.log
         working-directory: ./ab-test
 
-      # Give time for stack to come up fully
-      - run: sleep 120s
+      # Wait until sails is running (was: sleep 120s)
+      - name: Wait for AppBuilder
+        working-directory: ./ab-test
+        run: |
+          set -a; . ./.env; set +a
+          deadline=$((SECONDS + 300))
+          until docker service ls --filter "name=${CYPRESS_STACK}_" --format '{{.Name}} {{.Replicas}}' | awk '/sails/ {print $2}' | grep -q '^1/1'; do
+            [ $SECONDS -ge $deadline ] && { echo "::error::sails not up after 300s"; docker service ls; exit 1; }
+            sleep 2
+          done
+          echo "sails 1/1 after ${SECONDS}s"
+          # --develop runs sails from source, so 1/1 can come before it listens. Any HTTP answer on 1337 = ready.
+          until [ "$(curl -s -o /dev/null --max-time 3 -w '%{http_code}' http://localhost:1337 || true)" != "000" ]; do
+            [ $SECONDS -ge $deadline ] && { echo "::warning::sails not answering on 1337 after 300s, running tests anyway"; break; }
+            sleep 3
+          done
+          echo "ready after ${SECONDS}s"
 
       - run: docker service ls
 
