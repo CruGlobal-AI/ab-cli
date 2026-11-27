@@ -49,14 +49,15 @@ jobs:
       - name: Install AppBuilder
         run: node index.js install ab-test --stack=ab-test --develop --port=80 --tag=latest --dbExpose=true --dbPort=8888 --dbPassword=root --authType=login --relayEnabled=false --siteURL=http://localhost:80 --tenant.username=admin --tenant.password=admin --tenant.email=admin@email.com --tenant.url=http://localhost:80
 
-      # Wait for the install's stack to come down fully (was: sleep 15)
-      - name: Wait for install stack to come down
+      # Wait for the install's stacks (ab-test and test_ab-test) to come down fully (was: sleep 15).
+      # UP.sh fails with "network ... not found" if it deploys while a network is still being removed.
+      - name: Wait for install stacks to come down
         run: |
           for i in $(seq 1 60); do
-            docker network ls --format '{{.Name}}' | grep -qx 'ab-test_default' || { echo "down after ${i}s"; exit 0; }
+            docker network ls --format '{{.Name}}' | grep -qE '^(test_)?ab-test_default$' || { echo "down after ${i}s"; exit 0; }
             sleep 1
           done
-          echo "::warning::ab-test_default network still up after 60s"
+          echo "::warning::ab-test networks still up after 60s"; docker network ls
 
       # Update Permissions: api_sails crashes if a local DB attempt is used
       # and we don't have permission to write there.
@@ -106,14 +107,14 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-node${{ matrix.node }}
           path: ./ab-test/test/e2e/cypress/screenshots
 
       - name: Save Service Logs
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ABServices.log
+          name: ABServices.log-node${{ matrix.node }}
           path: ./ab-test/logs/ABServices.log
 
       # eslint-disable-next-line
@@ -153,7 +154,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ABServices.log
+          name: ABServices-after-down.log-node${{ matrix.node }}
           path: ./ab-test/logs/ABServices.log
 
       # - name: Take Down Test Stack
