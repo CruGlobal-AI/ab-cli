@@ -16,7 +16,9 @@ jobs:
         # windows runner does not suppport linux containers
         # see:
         os: [ubuntu-latest] #, windows-latest] #,macos-latest]
-        node: [18, 20, 21]
+        # 26 = current LTS, listed first so it starts first (fail-fast cancels the rest if it fails).
+        # 18, 20, 21 are end-of-life.
+        node: [26, 18, 20, 21]
     env:
       CYPRESS_RESPONSE_TIMEOUT: 200000
       CYPRESS_DEFAULT_COMMAND_TIMEOUT: 30000
@@ -49,8 +51,15 @@ jobs:
       - name: Install AppBuilder
         run: node index.js install ab-test --stack=ab-test --develop --port=80 --tag=latest --dbExpose=true --dbPort=8888 --dbPassword=root --authType=login --relayEnabled=false --siteURL=http://localhost:80 --tenant.username=admin --tenant.password=admin --tenant.email=admin@email.com --tenant.url=http://localhost:80
 
-      # Give some time for the stack to come down fully
-      - run: sleep 15
+      # Wait for the install's stacks (ab-test and test_ab-test) to come down fully (was: sleep 15).
+      # UP.sh fails with "network ... not found" if it deploys while a network is still being removed.
+      - name: Wait for install stacks to come down
+        run: |
+          for i in $(seq 1 60); do
+            docker network ls --format '{{.Name}}' | grep -qE '^(test_)?ab-test_default$' || { echo "down after ${i}s"; exit 0; }
+            sleep 1
+          done
+          echo "::warning::ab-test networks still up after 60s"; docker network ls
 
       # Update Permissions: api_sails crashes if a local DB attempt is used
       # and we don't have permission to write there.
@@ -72,8 +81,23 @@ jobs:
         run: pm2 start ./logs.js -- --toFile logs/ABServices.log
         working-directory: ./ab-test
 
-      # Give time for stack to come up fully
-      - run: sleep 120s
+      # Wait until sails is running (was: sleep 120s)
+      - name: Wait for AppBuilder
+        working-directory: ./ab-test
+        run: |
+          set -a; . ./.env; set +a
+          deadline=$((SECONDS + 300))
+          until docker service ls --filter "name=${CYPRESS_STACK}_" --format '{{.Name}} {{.Replicas}}' | awk '/sails/ {print $2}' | grep -q '^1/1'; do
+            [ $SECONDS -ge $deadline ] && { echo "::error::sails not up after 300s"; docker service ls; exit 1; }
+            sleep 2
+          done
+          echo "sails 1/1 after ${SECONDS}s"
+          # --develop runs sails from source, so 1/1 can come before it listens. Any HTTP answer on 1337 = ready.
+          until [ "$(curl -s -o /dev/null --max-time 3 -w '%{http_code}' http://localhost:1337 || true)" != "000" ]; do
+            [ $SECONDS -ge $deadline ] && { echo "::warning::sails not answering on 1337 after 300s, running tests anyway"; break; }
+            sleep 3
+          done
+          echo "ready after ${SECONDS}s"
 
       - run: docker service ls
 
@@ -85,14 +109,14 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-node${{ matrix.node }}
           path: ./ab-test/test/e2e/cypress/screenshots
 
       - name: Save Service Logs
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ABServices.log
+          name: ABServices.log-node${{ matrix.node }}
           path: ./ab-test/logs/ABServices.log
 
       # eslint-disable-next-line
@@ -132,7 +156,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ABServices.log
+          name: ABServices-after-down.log-node${{ matrix.node }}
           path: ./ab-test/logs/ABServices.log
 
       # - name: Take Down Test Stack
