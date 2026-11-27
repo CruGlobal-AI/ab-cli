@@ -93,8 +93,11 @@ jobs:
           done
           echo "sails 1/1 after ${SECONDS}s"
           # --develop runs sails from source, so 1/1 can come before it listens. Any HTTP answer on 1337 = ready.
-          until [ "$(curl -s -o /dev/null --max-time 3 -w '%{http_code}' http://localhost:1337 || true)" != "000" ]; do
-            [ $SECONDS -ge $deadline ] && { echo "::warning::sails not answering on 1337 after 300s, running tests anyway"; break; }
+          # 127.0.0.1, not localhost: localhost can resolve to ::1, which the swarm port mapping may not answer.
+          # Capped at 120s (the old fixed sleep), so this is never slower than before.
+          http_deadline=$((SECONDS + 120))
+          until [ "$(curl -s -o /dev/null --max-time 3 -w '%{http_code}' http://127.0.0.1:1337 || true)" != "000" ]; do
+            [ $SECONDS -ge $http_deadline ] && { echo "::warning::sails not answering on 127.0.0.1:1337 after 120s, running tests anyway"; break; }
             sleep 3
           done
           echo "ready after ${SECONDS}s"
